@@ -13,7 +13,9 @@ pbms_odoo_load_env() {
   OPENG2P_WORKSPACE="${OPENG2P_WORKSPACE:-../openg2p-workspace}"
   OPENG2P_WORKSPACE="$(cd "$PBMS_DEV_ROOT" && cd "$OPENG2P_WORKSPACE" && pwd)"
   ODOO_PATH="${ODOO_PATH:-${OPENG2P_WORKSPACE}/odoo17}"
+  ODOO_PATH="$(cd "$PBMS_DEV_ROOT" && cd "$ODOO_PATH" && pwd)"
   PBMS_PATH="${PBMS_PATH:-${OPENG2P_WORKSPACE}/pbms}"
+  PBMS_PATH="$(cd "$PBMS_DEV_ROOT" && cd "$PBMS_PATH" && pwd)"
   PBMS_ODOO_CONF="${PBMS_DEV_ROOT}/generated/odoo/pbms-odoo.conf"
   PBMS_DB_NAME="${PBMS_DB_NAME:-pbmsdb}"
   PBMS_DB_USER="${PBMS_DB_USER:-pbmsuser}"
@@ -71,6 +73,10 @@ pbms_odoo_reconcile_python_deps() {
   pip install -r "${ODOO_PATH}/requirements.txt"
   pip install 'boto3>=1.34'
   pip install -r "${ODOO_PATH}/requirements.txt"
+  # g2p_pbms imports openg2p_g2p_bridge_models, which pulls SQLAlchemy.
+  # 2.0.20 crashes on Python 3.13 (TypingOnly). Install a 3.13-safe release
+  # after the addon requirements, which pin the older one.
+  pip install 'SQLAlchemy>=2.0.41,<2.1'
 }
 
 pbms_odoo_install_python_deps() {
@@ -89,6 +95,7 @@ pbms_odoo_install_python_deps() {
     "${PBMS_PATH}/odoo"
     "${PBMS_PATH}/odoo/extensions"
     "${OPENG2P_WORKSPACE}/openg2p-odoo-commons"
+    "${OPENG2P_WORKSPACE}/pbms-connectors/odoo"
   )
 
   local root req

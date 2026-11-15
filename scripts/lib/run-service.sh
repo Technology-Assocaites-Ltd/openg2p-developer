@@ -102,6 +102,7 @@ run_service() {
     echo "Skipping ${name}: directory not found (${dir})" >&2
     return 0
   fi
+  dir="$(cd "$dir" && pwd)"
 
   local venv_python=""
   if [[ -x "${dir}/venv/bin/python" ]]; then
@@ -142,11 +143,12 @@ run_service() {
   } >"$launcher"
   chmod +x "$launcher"
 
-  # setsid: new session so SIGHUP from make/script exit cannot kill the service.
+  # New session so the service keeps running after this script exits.
+  # macOS often has no setsid binary; Python's os.setsid() does the same job.
   if command -v setsid >/dev/null 2>&1; then
     setsid "$launcher" >>"$log_file" 2>&1 &
   else
-    nohup "$launcher" >>"$log_file" 2>&1 &
+    python3 -c 'import os, sys; os.setsid(); os.execv(sys.argv[1], sys.argv[1:])' "$launcher" >>"$log_file" 2>&1 &
   fi
   RUN_SERVICE_LAST_PID=$!
   disown -h "$RUN_SERVICE_LAST_PID" 2>/dev/null || true

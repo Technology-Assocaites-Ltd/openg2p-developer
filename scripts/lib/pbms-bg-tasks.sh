@@ -34,7 +34,13 @@ pbms_bg_tasks_load_env() {
 
   BG_TASK_MODELS_DIR="${PBMS_PATH}/core/openg2p-bg-task-models"
   PBMS_MODELS_DIR="${PBMS_PATH}/core/openg2p-pbms-models"
-  REGISTRY_ADAPTERS_DIR="${PBMS_PATH}/extensions/openg2p-bg-task-registry-adapters"
+  # Older PBMS trees kept adapters inside pbms/extensions. Current OpenG2P
+  # develop ships them in the pbms-connectors repo.
+  if [[ -d "${PBMS_PATH}/extensions/openg2p-bg-task-registry-adapters" ]]; then
+    REGISTRY_ADAPTERS_DIR="${PBMS_PATH}/extensions/openg2p-bg-task-registry-adapters"
+  else
+    REGISTRY_ADAPTERS_DIR="${OPENG2P_WORKSPACE}/pbms-connectors/extensions/registry-adapters"
+  fi
   STAFF_API_DIR="${PBMS_PATH}/apis/openg2p-pbms-staff-portal-api"
   CELERY_BEAT_DIR="${PBMS_PATH}/core/openg2p-bg-task-celery-beat-producers"
   CELERY_WORKERS_DIR="${PBMS_PATH}/core/openg2p-bg-task-celery-workers"
@@ -48,6 +54,7 @@ pbms_bg_tasks_registry_db_name() {
   case "${PBMS_REGISTRY_VARIANT}" in
     farmer-registry) echo "farmer_registry_db" ;;
     national-social-registry) echo "nsr_registry_db" ;;
+    village-social-security-registry) echo "vsss_registry_db" ;;
     *)
       # shellcheck disable=SC1091
       source "${PBMS_DEV_ROOT}/scripts/lib/extension-manifest.sh"
@@ -101,6 +108,11 @@ pbms_bg_tasks_wait_redis() {
   for i in $(seq 1 30); do
     if command -v redis-cli >/dev/null 2>&1 \
       && redis-cli -h "${REDIS_HOST}" -p "${REDIS_PORT}" ping 2>/dev/null | grep -q PONG; then
+      echo "Redis is ready."
+      return 0
+    fi
+    # redis-cli is not required. A raw PING is enough to know the server is up.
+    if python3 -c "import socket; s=socket.create_connection(('${REDIS_HOST}', int('${REDIS_PORT}')), 2); s.sendall(b'PING\r\n'); raise SystemExit(0 if b'PONG' in s.recv(32) else 1)" 2>/dev/null; then
       echo "Redis is ready."
       return 0
     fi

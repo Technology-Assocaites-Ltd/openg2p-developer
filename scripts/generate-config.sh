@@ -15,6 +15,10 @@ fi
 OPENG2P_WORKSPACE="$(workspace_open)"
 ODOO_PATH="${ODOO_PATH:-${OPENG2P_WORKSPACE}/odoo17}"
 PBMS_PATH="${PBMS_PATH:-${OPENG2P_WORKSPACE}/pbms}"
+# .env often stores these relative to the developer repo. Odoo is started with
+# its work directory as cwd, so a relative addons_path would miss core addons.
+ODOO_PATH="$(cd "$ROOT_DIR" && cd "$ODOO_PATH" && pwd)"
+PBMS_PATH="$(cd "$ROOT_DIR" && cd "$PBMS_PATH" && pwd)"
 GENERATED_DIR="${ROOT_DIR}/generated"
 
 POSTGRES_HOST="${POSTGRES_HOST:-localhost}"
