@@ -42,15 +42,17 @@ make help
 
 From `openg2p-developer`, with `.env` already filled in.
 
-The Docker VSSS registry has to be up first. The partner API check is `http://127.0.0.1:8022/ping` returning 200. If it does not, run `make docker-vsss-up` and wait for that check.
-
-Then run:
+If the social registry is already running, leave it. Check `http://127.0.0.1:8022/ping`. When that returns 200, run:
 
 ```bash
 make vsss-pbms-connector-up
 ```
 
-That command installs PBMS if needed, starts PBMS Odoo, the PBMS staff API, PBMS Celery, and the registry connector, and points PBMS at `vsss_registry_db`. It uses the Docker registry that is already running. It does not start G2P Bridge or SPAR.
+That keeps the registry you already have. It does not stop those containers and it does not drop `vsss_registry_db`. It adds PBMS and the connector, and it only creates the pieces that are missing.
+
+If the social registry is not running, start it first with `make docker-vsss-up`, wait until `http://127.0.0.1:8022/ping` returns 200, then run the command above. Do not run `make docker-vsss-up` again once that registry is the one you want to keep. That command stops it and resets its databases.
+
+`make vsss-pbms-connector-up` starts PBMS Odoo, the PBMS staff API, PBMS Celery, and the registry connector, and points PBMS at `vsss_registry_db`. It does not start G2P Bridge or SPAR.
 
 The script prints `OK` or `FAIL` for each check. Done looks like this:
 
