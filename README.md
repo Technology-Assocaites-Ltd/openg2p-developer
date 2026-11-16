@@ -38,34 +38,40 @@ Default ports and credentials are defined in `.env.example`.
 make help
 ```
 
-## Village Social Security, then PBMS
+## Put PBMS and the connector up
 
-Run these in order. Wait until the check passes before the next step.
+From `openg2p-developer`, with `.env` already filled in.
 
-1. Start the Docker registry.
+The Docker VSSS registry has to be up first. The partner API check is `http://127.0.0.1:8022/ping` returning 200. If it does not, run `make docker-vsss-up` and wait for that check.
 
-```bash
-make docker-vsss-up
-```
-
-Pass: `http://127.0.0.1:8022/ping` returns 200.
-
-2. Attach PBMS and the registry connector to that registry. This does not start a second registry.
+Then run:
 
 ```bash
 make vsss-pbms-connector-up
 ```
 
-Pass:
+That command installs PBMS if needed, starts PBMS Odoo, the PBMS staff API, PBMS Celery, and the registry connector, and points PBMS at `vsss_registry_db`. It uses the Docker registry that is already running. It does not start G2P Bridge or SPAR.
 
-- VSSS partner `http://127.0.0.1:8022/ping` returns 200
-- PBMS staff API `http://127.0.0.1:8050/docs` returns 200
-- PBMS Odoo `http://127.0.0.1:8069/web/login` returns 200
-- Connector `http://127.0.0.1:8070/health` and `http://127.0.0.1:8070/health/ready` return 200
+The script prints `OK` or `FAIL` for each check. Done looks like this:
 
-PBMS Celery uses `vsss_registry_db`.
+```text
+OK  VSSS partner http://127.0.0.1:8022/ping -> 200
+OK  PBMS staff API http://127.0.0.1:8050/docs -> 200
+OK  PBMS Odoo http://127.0.0.1:8069/web/login -> 200
+OK  Connector http://127.0.0.1:8070/health -> 200
+OK  Connector ready http://127.0.0.1:8070/health/ready -> 200
+OK  PBMS celery beat is running
+OK  PBMS celery worker is running
+OK  connector celery worker is running
+```
 
-G2P Bridge is the next step. This command leaves it off.
+Open:
+
+- PBMS Odoo at http://127.0.0.1:8069
+- PBMS staff API at http://127.0.0.1:8050/docs
+- Connector at http://127.0.0.1:8070/health
+
+If a line says `FAIL`, the log for that process is under `generated/run/`.
 
 ## License
 
