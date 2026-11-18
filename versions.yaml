@@ -150,7 +150,7 @@ images:
   postgres: postgres:16
   redis: redis:7-alpine
   # Pinned: `latest` made the local stack non-reproducible across rebuilds.
-  minio: minio/minio:RELEASE.2025-04-22T22-12-26Z
+  minio: pgsty/minio:RELEASE.2026-08-04T00-00-00Z
   keycloak: quay.io/keycloak/keycloak:26.0
   id_generator: openg2p/openg2p-id-generator:1.1.2
 
