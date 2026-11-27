@@ -38,7 +38,7 @@ services:
 
   minio:
     profiles: [infra, commons, farmer-registry, nsr-registry, farmer-registry-seed, nsr-registry-seed, full]
-    image: minio/minio:latest
+    image: pgsty/minio:RELEASE.2026-08-04T00-00-00Z
     container_name: openg2p-minio
     # Buckets are plain directories under /data, so create them here and drop
     # the separate minio-init container, which ran `mc mb` and always exited 1:
