@@ -29,6 +29,7 @@ VSSS_REF="${VSSS_REF:-feat/vsss-1.2-inverted-build}"
 G2P_BRIDGE_REF="${G2P_BRIDGE_REF:-develop}"
 SPAR_REF="${SPAR_REF:-develop}"
 AWE_REF="${AWE_REF:-develop}"
+REGISTRY_CONNECTOR_REF="${REGISTRY_CONNECTOR_REF:-develop}"
 
 clone_repo() {
   local name="$1"
@@ -82,8 +83,8 @@ clone_repo_key() {
     pbms_connectors)
       clone_repo "OpenG2P PBMS Connectors" "https://github.com/OpenG2P/pbms-connectors.git" "$PBMS_REF" "pbms-connectors"
       ;;
-    registry_connectors)
-      clone_repo "OpenG2P Registry Connectors" "https://github.com/OpenG2P/registry-connector.git" "$PBMS_REF" "registry-connector"
+    registry_connector)
+      clone_repo "OpenG2P Registry Connector" "https://github.com/OpenG2P/registry-connector.git" "$REGISTRY_CONNECTOR_REF" "registry-connector"
       ;;
     odoo_commons)
       clone_repo "OpenG2P Odoo Commons" "https://github.com/OpenG2P/openg2p-odoo-commons.git" "$PBMS_REF" "openg2p-odoo-commons"
