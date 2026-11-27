@@ -80,7 +80,8 @@ pbms_odoo_reconcile_python_deps() {
   # g2p_pbms imports openg2p_g2p_bridge_models, which pulls SQLAlchemy.
   # 2.0.20 crashes on Python 3.13 (TypingOnly). Install a 3.13-safe release
   # after the addon requirements, which pin the older one.
-  pip install 'SQLAlchemy>=2.0.41,<2.1'
+  pip install 'sqlalchemy==2.0.20'
+  pip install "extendable-pydantic>=1.3.2"
 }
 
 pbms_odoo_install_python_deps() {
