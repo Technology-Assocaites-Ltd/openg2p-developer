@@ -49,7 +49,7 @@ clone_profile_repo_keys() {
       echo "registry_platform iam_service master_data_service awe farmer_registry national_social_registry village_social_security_registry openg2p_data"
       ;;
     pbms)
-      echo "odoo pbms odoo_commons registry_platform iam_service master_data_service awe farmer_registry openg2p_data"
+      echo "odoo pbms pbms_connectors odoo_commons registry_platform iam_service master_data_service awe farmer_registry openg2p_data"
       ;;
     bridge)
       echo "g2p_bridge"
@@ -58,7 +58,7 @@ clone_profile_repo_keys() {
       echo "spar"
       ;;
     full)
-      echo "odoo pbms odoo_commons registry_platform iam_service master_data_service openg2p_data farmer_registry national_social_registry village_social_security_registry g2p_bridge spar awe"
+      echo "odoo pbms pbms_connectors odoo_commons registry_platform iam_service master_data_service openg2p_data farmer_registry national_social_registry village_social_security_registry g2p_bridge spar awe"
       ;;
     *)
       echo "Unknown PROFILE '${1}'. Valid profiles:" >&2

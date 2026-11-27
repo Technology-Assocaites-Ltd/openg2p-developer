@@ -73,6 +73,10 @@ pbms_odoo_reconcile_python_deps() {
   pip install -r "${ODOO_PATH}/requirements.txt"
   pip install 'boto3>=1.34'
   pip install -r "${ODOO_PATH}/requirements.txt"
+  # community-addons pin pydantic>=2.0.0 and extendable-pydantic<=1.3.0.
+  # 1.3.0 patches pydantic._internal._generate_schema.get_type_ref, which
+  # pydantic 2.11 removed. Leave the venv on the last series that still has it.
+  pip install 'pydantic>=2.10.6,<2.11'
   # g2p_pbms imports openg2p_g2p_bridge_models, which pulls SQLAlchemy.
   # 2.0.20 crashes on Python 3.13 (TypingOnly). Install a 3.13-safe release
   # after the addon requirements, which pin the older one.
