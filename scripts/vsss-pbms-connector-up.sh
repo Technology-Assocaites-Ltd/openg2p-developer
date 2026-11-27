@@ -59,10 +59,11 @@ keys=()
 [[ -d "${OPENG2P_WORKSPACE}/openg2p-odoo-commons/.git" ]] || keys+=(odoo_commons)
 [[ -f "${OPENG2P_WORKSPACE}/pbms/odoo/g2p_pbms/__manifest__.py" ]] || keys+=(pbms)
 [[ -d "${OPENG2P_WORKSPACE}/pbms-connectors/extensions/registry-adapters" ]] || keys+=(pbms_connectors)
+[[ -f "${OPENG2P_WORKSPACE}/registry-connector/api/pyproject.toml" ]] || keys+=(registry_connector)
 if [[ ${#keys[@]} -gt 0 ]]; then
   CLONE_REPO_KEYS="${keys[*]}" bash "${ROOT_DIR}/scripts/clone-repos.sh"
 else
-  echo "Odoo, Odoo Commons, and PBMS are already present."
+  echo "Odoo, Odoo Commons, PBMS, and the registry connector are already present."
 fi
 
 echo "==> Generate PBMS env (registry DB = vsss_registry_db) ..."
