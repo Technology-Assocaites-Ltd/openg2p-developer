@@ -174,12 +174,43 @@ check() {
   fi
 }
 
+# First import of the connector (kafka, otel, celery) happens after the
+# process is backgrounded. A single curl then gets "connection refused"
+# and make exits before uvicorn binds. Wait, and stop early if it died.
+wait_for_url() {
+  local url="$1" expect="$2" tries="${3:-30}" pidfile="${4:-}"
+  local code i pid
+  for i in $(seq 1 "$tries"); do
+    code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 "$url" || true)"
+    if [[ " ${expect} " == *" ${code} "* ]]; then
+      return 0
+    fi
+    if [[ -n "$pidfile" && -f "$pidfile" ]]; then
+      pid="$(tr -d '[:space:]' <"$pidfile")"
+      if [[ -n "$pid" ]] && ! kill -0 "$pid" 2>/dev/null; then
+        echo "Process in ${pidfile} exited while waiting for ${url}" >&2
+        return 1
+      fi
+    fi
+    sleep 2
+  done
+  return 1
+}
+
+CONNECTOR_API_LOG="${ROOT_DIR}/generated/run/vsss-connector-api.log"
+CONNECTOR_API_PID="${ROOT_DIR}/generated/run/vsss-connector-api.pid"
+
 # Odoo can take a while to bind.
-for _ in $(seq 1 30); do
-  code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 "http://127.0.0.1:${PBMS_HTTP_PORT:-8069}/web/login" || true)"
-  [[ "$code" == "200" || "$code" == "303" ]] && break
-  sleep 2
-done
+wait_for_url "http://127.0.0.1:${PBMS_HTTP_PORT:-8069}/web/login" "200 303" 30 || true
+
+echo "==> Waiting for connector API on :${CONNECTOR_PORT} ..."
+if ! wait_for_url "http://127.0.0.1:${CONNECTOR_PORT}/health" 200 30 "$CONNECTOR_API_PID"; then
+  echo "Connector API did not stay up on :${CONNECTOR_PORT}." >&2
+  if [[ -f "$CONNECTOR_API_LOG" ]]; then
+    echo "---- ${CONNECTOR_API_LOG} (last 40 lines) ----" >&2
+    tail -n 40 "$CONNECTOR_API_LOG" >&2 || true
+  fi
+fi
 
 check "VSSS partner" "http://127.0.0.1:${PARTNER_PORT}/ping" 200
 check "PBMS staff API" "http://127.0.0.1:${PBMS_STAFF_API_PORT:-8050}/docs" 200
