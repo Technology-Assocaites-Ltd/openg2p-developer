@@ -58,6 +58,7 @@ keys=()
 [[ -f "${OPENG2P_WORKSPACE}/odoo17/odoo-bin" ]] || keys+=(odoo)
 [[ -d "${OPENG2P_WORKSPACE}/openg2p-odoo-commons/.git" ]] || keys+=(odoo_commons)
 [[ -f "${OPENG2P_WORKSPACE}/pbms/odoo/g2p_pbms/__manifest__.py" ]] || keys+=(pbms)
+[[ -d "${OPENG2P_WORKSPACE}/pbms-connectors/extensions/registry-adapters" ]] || keys+=(pbms_connectors)
 if [[ ${#keys[@]} -gt 0 ]]; then
   CLONE_REPO_KEYS="${keys[*]}" bash "${ROOT_DIR}/scripts/clone-repos.sh"
 else
