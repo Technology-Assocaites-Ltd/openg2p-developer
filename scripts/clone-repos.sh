@@ -82,6 +82,9 @@ clone_repo_key() {
     pbms_connectors)
       clone_repo "OpenG2P PBMS Connectors" "https://github.com/OpenG2P/pbms-connectors.git" "$PBMS_REF" "pbms-connectors"
       ;;
+    registry_connectors)
+      clone_repo "OpenG2P Registry Connectors" "https://github.com/OpenG2P/registry-connector.git" "$PBMS_REF" "registry-connectors"
+      ;;
     odoo_commons)
       clone_repo "OpenG2P Odoo Commons" "https://github.com/OpenG2P/openg2p-odoo-commons.git" "$PBMS_REF" "openg2p-odoo-commons"
       ;;

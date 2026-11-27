@@ -70,7 +70,6 @@ pbms_odoo_reconcile_python_deps() {
   # Odoo 17 on Python 3.11+ (expects urllib3 1.26.5 or 2.0.7). Re-apply Odoo pins,
   # then install a modern boto3 for local dev (S3 storage addons).
   echo "Reconciling Odoo core pins with PBMS addon dependencies ..."
-  pip install -r "${ODOO_PATH}/requirements.txt"
   pip install 'boto3>=1.34'
   pip install -r "${ODOO_PATH}/requirements.txt"
   # community-addons pin pydantic>=2.0.0 and extendable-pydantic<=1.3.0.
